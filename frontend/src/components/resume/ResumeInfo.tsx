@@ -1,7 +1,7 @@
 import { Box, Typography, Chip } from '@mui/material';
 import { Work, CalendarToday } from '@mui/icons-material';
 import { StatusChip } from '../shared/StatusChip';
-import { formatDate } from '../../utils/dateUtils';
+import { formatDate } from '../../utils/helpers';
 import type { Resume } from '../../types';
 
 interface ResumeInfoProps {

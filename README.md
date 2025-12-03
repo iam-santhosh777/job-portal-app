@@ -16,7 +16,7 @@ This will start both the backend server and frontend development server simultan
 
 - **Node.js** >= 18.0.0
 - **npm** >= 9.0.0
-- **MySQL** database (see setup options below)
+- **MySQL database** hosted on Railway (or another cloud provider)
 
 ## 🛠️ Installation
 
@@ -32,41 +32,15 @@ This will install dependencies for the root, backend, and frontend projects.
 
 ### 2. Database Setup
 
-Choose one of the following options:
+This project uses **Railway** for MySQL database hosting. 
 
-#### Option A: Docker (Recommended for Local Development)
+1. Create a MySQL service on Railway: https://railway.app
+2. Get your connection details from the Railway dashboard
+3. You can use either:
+   - **MYSQL_URL** (full connection string): `mysql://user:password@host:port/database`
+   - **Individual variables**: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
 
-```bash
-docker run --name mysql-jobportal \
-  -e MYSQL_ROOT_PASSWORD=rootpassword \
-  -e MYSQL_DATABASE=job_portal_db \
-  -p 3306:3306 \
-  -d mysql:8.0
-```
-
-#### Option B: Cloud MySQL (Free Tier Available)
-
-- **Railway**: https://railway.app
-- **PlanetScale**: https://planetscale.com
-- **Aiven**: https://aiven.io
-
-#### Option C: Local MySQL Installation
-
-**Windows:**
-- Download MySQL Installer from: https://dev.mysql.com/downloads/installer/
-
-**macOS:**
-```bash
-brew install mysql
-brew services start mysql
-```
-
-**Linux (Ubuntu/Debian):**
-```bash
-sudo apt update
-sudo apt install mysql-server
-sudo systemctl start mysql
-```
+**Note:** Make sure to use the **PUBLIC** connection details (not `mysql.railway.internal`) for local development.
 
 ### 3. Initialize Database
 
@@ -76,10 +50,7 @@ Create the database schema:
 npm run init-db
 ```
 
-Or manually run the SQL script:
-```bash
-mysql -u root -p < backend/database/schema.sql
-```
+This will connect to your Railway database and create all necessary tables.
 
 ### 4. Environment Configuration
 
@@ -91,18 +62,22 @@ Copy the example file and configure:
 cp backend/.env.example backend/.env
 ```
 
-Edit `backend/.env` with your database credentials:
+Edit `backend/.env` with your Railway database credentials:
 
 ```env
 PORT=3000
 NODE_ENV=development
 
-# Database Configuration
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=your_password_here
-DB_NAME=job_portal_db
+# Database Configuration (Railway)
+# Option 1: Use full connection URL (recommended)
+MYSQL_URL=mysql://user:password@host:port/database
+
+# Option 2: Use individual variables
+# DB_HOST=your-railway-host.railway.app
+# DB_PORT=3306
+# DB_USER=root
+# DB_PASSWORD=your_password
+# DB_NAME=railway
 
 # JWT Secret (change this!)
 JWT_SECRET=your-secret-key-change-in-production-min-32-characters-long
@@ -136,18 +111,15 @@ VITE_ENV=development
 
 ## 🎯 Available Scripts
 
-> **Note:** Use `npm run dev` for local development with localhost backend, or `npm run dev:prod` to connect to Railway backend while developing locally.
-
 ### Root Level Commands
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start both frontend and backend in development mode (localhost) |
-| `npm run dev:prod` | Start frontend in dev mode connecting to Railway backend |
+| `npm run dev` | Start both frontend and backend in development mode |
 | `npm start` | Start both frontend and backend in production mode |
 | `npm run build` | Build the frontend for production |
 | `npm run install:all` | Install all dependencies (root, backend, frontend) |
-| `npm run init-db` | Initialize the database schema |
+| `npm run init-db` | Initialize the database schema on Railway |
 
 ### Backend Commands
 
@@ -213,12 +185,14 @@ job_portal_app/
 |----------|-------------|----------|---------|
 | `PORT` | Server port | No | `3000` |
 | `NODE_ENV` | Environment mode | No | `development` |
-| `DB_HOST` | MySQL host | Yes | `localhost` |
-| `DB_PORT` | MySQL port | No | `3306` |
-| `DB_USER` | MySQL username | Yes | `root` |
-| `DB_PASSWORD` | MySQL password | Yes | - |
-| `DB_NAME` | Database name | Yes | `job_portal_db` |
-| `MYSQL_URL` | Full MySQL connection URL (alternative to individual vars) | No | - |
+| `DB_HOST` | MySQL host (Railway public hostname) | Yes* | - |
+| `DB_PORT` | MySQL port | Yes* | `3306` |
+| `DB_USER` | MySQL username | Yes* | - |
+| `DB_PASSWORD` | MySQL password | Yes* | - |
+| `DB_NAME` | Database name | Yes* | - |
+| `MYSQL_URL` | Full MySQL connection URL (alternative to individual vars) | Yes* | - |
+
+*Either `MYSQL_URL` or all individual database variables are required
 | `JWT_SECRET` | Secret key for JWT tokens | Yes | - |
 | `CLIENT_URL` | Comma-separated allowed CORS origins | No | `http://localhost:5173` |
 | `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name (optional) | No | - |
@@ -243,21 +217,11 @@ If port 3000 or 5173 is already in use:
 
 ### Database Connection Failed
 
-1. Verify MySQL is running:
-   ```bash
-   # Docker
-   docker ps
-   
-   # Local MySQL
-   # Windows: Check Services panel
-   # macOS/Linux: sudo systemctl status mysql
-   ```
-
-2. Check database credentials in `backend/.env`
-3. Ensure the database exists:
-   ```bash
-   mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS job_portal_db;"
-   ```
+1. Verify your Railway MySQL service is running and accessible
+2. Check database credentials in `backend/.env` match your Railway connection details
+3. Ensure you're using the **PUBLIC** hostname (not `mysql.railway.internal`)
+4. Verify the database exists in your Railway MySQL service
+5. Check Railway service logs for any connection issues
 
 ### Frontend Can't Connect to Backend
 

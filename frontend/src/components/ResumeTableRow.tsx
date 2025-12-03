@@ -8,7 +8,7 @@ import {
 import { Description, Work, CalendarToday } from '@mui/icons-material';
 import { StatusChip } from './shared/StatusChip';
 import { ResumeActions } from './resume/ResumeActions';
-import { formatDate } from '../utils/dateUtils';
+import { formatDate } from '../utils/helpers';
 import type { Resume } from '../types';
 
 interface ResumeTableRowProps {

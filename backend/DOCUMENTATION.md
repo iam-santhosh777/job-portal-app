@@ -110,32 +110,24 @@ curl -X POST http://localhost:3000/api/jobs \
 npm install
 ```
 
-### Step 2: MySQL Database Options
+### Step 2: MySQL Database Setup
 
-#### Option 1: Docker (Recommended - Easiest)
-```bash
-docker run --name mysql-container \
-  -e MYSQL_ROOT_PASSWORD=rootpassword \
-  -e MYSQL_DATABASE=testdb \
-  -p 3306:3306 -d mysql:8.0
-```
+This project uses **Railway** for MySQL database hosting.
 
-#### Option 2: Cloud MySQL (Free Tier)
-- **Railway**: https://railway.app (Recommended - already using for MySQL)
+1. **Create a MySQL service on Railway:**
+   - Sign up at: https://railway.app
+   - Create a new MySQL service
+   - Get connection details from service settings
+
+2. **Connection Options:**
+   - Use **MYSQL_URL** (full connection string): `mysql://user:password@host:port/database`
+   - Or use individual variables: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
+
+**Important:** Use the **PUBLIC** hostname from Railway (not `mysql.railway.internal`) for local development.
+
+**Alternative Cloud Providers:**
 - **PlanetScale**: https://planetscale.com
 - **Aiven**: https://aiven.io
-
-#### Option 3: Install MySQL Locally
-**Windows:**
-- Download MySQL Installer from: https://dev.mysql.com/downloads/installer/
-
-**macOS:**
-```bash
-brew install mysql
-brew services start mysql
-```
-
-**Linux:**
 ```bash
 sudo apt update
 sudo apt install mysql-server
@@ -179,25 +171,14 @@ nodejs_project/
    - Or click **"Connect"** → **"Query"**
 
 3. **Run the SQL**
-   - Copy the SQL from `database/schema.sql` file
+   - Copy the SQL from `scripts/init-database.js` (the table creation queries)
    - Paste it into the query editor
    - Click **"Run"** or **"Execute"**
 
 4. **Verify**
-   - You should see the table created
-   - Sample data will be inserted (3 users)
+   - You should see the tables created
 
-### Method 2: Using MySQL Client
-
-```bash
-# Connect to Railway MySQL
-mysql -h yamabiko.proxy.rlwy.net -P 34702 -u root -p railway
-
-# Then run:
-source database/schema.sql
-```
-
-### Method 3: Using npm Script
+### Method 2: Using npm Script (Recommended)
 
 ```bash
 npm run init-db

@@ -20,7 +20,7 @@ import {
 } from '@mui/icons-material';
 import { resumeAPI } from '../services/api';
 import { toast } from 'react-hot-toast';
-import { formatFileSize } from '../utils/fileUtils';
+import { formatFileSize } from '../utils/helpers';
 import type { Resume } from '../types';
 
 interface FileUploadState {

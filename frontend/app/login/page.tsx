@@ -17,8 +17,13 @@ import {
 import { Email, Lock, Login as LoginIcon, Visibility, VisibilityOff } from '@mui/icons-material';
 import Image from 'next/image';
 import nextHireLogo from '@/assets/nextHire.png';
+import { usePageMetadata } from '@/hooks/usePageMetadata';
 
 export default function LoginPage() {
+  usePageMetadata({
+    title: 'Login',
+    description: 'Sign in to your Job Portal account to browse jobs or manage your HR dashboard.',
+  });
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);

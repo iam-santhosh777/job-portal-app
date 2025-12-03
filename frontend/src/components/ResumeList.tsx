@@ -6,10 +6,10 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from '@mui/material';
 import { ResumeCard } from './ResumeCard';
 import { ResumeTableRow } from './ResumeTableRow';
-import { ResumeListHeader } from './ResumeListHeader';
 import { LoadingSpinner } from './shared/LoadingSpinner';
 import { EmptyState } from './shared/EmptyState';
 import { Description } from '@mui/icons-material';
@@ -50,7 +50,33 @@ export const ResumeList = ({
 
   return (
     <>
-      <ResumeListHeader count={resumes.length} />
+      <Box
+        sx={{
+          p: { xs: 2, sm: 3 },
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+          display: 'flex',
+          alignItems: 'center',
+          gap: { xs: 1.5, sm: 2 },
+        }}
+      >
+        <Description
+          sx={{
+            fontSize: { xs: 24, sm: 28 },
+            color: 'primary.main',
+          }}
+        />
+        <Typography
+          variant="h5"
+          component="h2"
+          sx={{
+            fontWeight: 700,
+            fontSize: { xs: '1.25rem', sm: '1.5rem' },
+          }}
+        >
+          All Resumes ({resumes.length})
+        </Typography>
+      </Box>
       {isDesktop ? (
         <TableContainer>
           <Table>

@@ -5,8 +5,13 @@ import { JobApplicationList } from '@/components/JobApplicationList';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { motion } from 'framer-motion';
 import { Container } from '@mui/material';
+import { usePageMetadata } from '@/hooks/usePageMetadata';
 
 export default function HRApplicationsPage() {
+  usePageMetadata({
+    title: 'Job Applications',
+    description: 'View and manage all job applications. Review candidate submissions and track application status.',
+  });
   return (
     <Layout>
       <Container maxWidth="xl">

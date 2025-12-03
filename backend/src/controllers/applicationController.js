@@ -20,12 +20,8 @@ class ApplicationController {
         });
       }
 
-      // Get all applications for these jobs
-      const allApplications = [];
-      for (const jobId of jobIds) {
-        const applications = await Application.findByJob(jobId);
-        allApplications.push(...applications);
-      }
+      // Get all applications for these jobs in a single query (optimized)
+      const allApplications = await Application.findByJobs(jobIds);
 
       res.status(200).json({
         success: true,

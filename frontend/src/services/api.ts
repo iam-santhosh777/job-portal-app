@@ -33,10 +33,9 @@ const getApiBaseUrl = (): string => {
 // Get the API base URL
 const API_BASE_URL = getApiBaseUrl();
 
-// Log the API URL being used
-if (typeof window !== 'undefined') {
+// Log the API URL being used (only in development)
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
   console.log('🔗 API Base URL:', API_BASE_URL);
-  console.log('🌐 Environment:', window.location.hostname === 'localhost' ? 'Development' : 'Production');
 }
 
 // Create axios instance
@@ -53,17 +52,13 @@ api.interceptors.request.use((config) => {
   const currentBaseUrl = getApiBaseUrl();
   config.baseURL = currentBaseUrl;
   
-  // Build the full URL for logging
-  const fullUrl = config.url?.startsWith('http') 
-    ? config.url 
-    : `${currentBaseUrl}${config.url || ''}`;
-  
-  console.log('📡 API Request:', {
-    method: config.method?.toUpperCase(),
-    fullUrl: fullUrl,
-    baseURL: currentBaseUrl,
-    endpoint: config.url
-  });
+  // Only log in development mode
+  if (process.env.NODE_ENV === 'development') {
+    const fullUrl = config.url?.startsWith('http') 
+      ? config.url 
+      : `${currentBaseUrl}${config.url || ''}`;
+    console.log('📡 API Request:', config.method?.toUpperCase(), fullUrl);
+  }
   
   return config;
 });
@@ -122,16 +117,6 @@ const normalizeJob = (job: any): Job => {
   // Map expiry_status to isExpired boolean
   const isExpired = expiry_status === 'expired' || 
     (job.isExpired !== undefined ? job.isExpired : (job.is_expired !== undefined ? job.is_expired : false));
-  
-  console.log('Normalizing job:', {
-    id: job.id,
-    title: job.title,
-    company: company,
-    expiryDate: expiryDate,
-    expiry_status: expiry_status,
-    isExpired: isExpired,
-    original: job
-  });
 
   return {
     id: String(job.id || job._id || ''),
@@ -168,12 +153,6 @@ const normalizeApplication = (application: any): JobApplication => {
     application.job?.Title ||
     (application.Job && typeof application.Job === 'object' ? application.Job.title || application.Job.Title : '') ||
     '';
-  
-  console.log('Normalizing application:', {
-    original: application,
-    extractedJobTitle: jobTitle,
-    jobObject: application.Job || application.job
-  });
 
   return {
     id: String(application.id || application._id || ''),
@@ -249,7 +228,6 @@ export const jobsAPI = {
       const response = await api.get<any>('/jobs/active');
       const data = extractData<any[]>(response.data);
       const normalized = normalizeJobs(data);
-      console.log('Active jobs fetched:', normalized);
       return normalized;
     } catch (error) {
       console.error('Error fetching active jobs:', error);
@@ -279,32 +257,29 @@ export const applicationsAPI = {
     try {
       const response = await api.get<any>('/applications');
       const data = extractData<any[]>(response.data);
-      console.log('Raw applications data from backend:', data);
       
       const normalized = normalizeApplications(data);
-      console.log('Applications after normalization:', normalized);
       
-      // If any application is missing jobTitle, try to fetch job details
+      // Job titles should now be included in the backend response
+      // Only fetch missing titles if absolutely necessary (shouldn't happen)
       const applicationsWithTitles = await Promise.all(
         normalized.map(async (app) => {
           if (!app.jobTitle && app.jobId) {
             try {
-              // Try to get job details to extract title
+              // Try to get job details to extract title (fallback only)
               const jobs = await jobsAPI.getAllJobs();
               const job = jobs.find(j => j.id === app.jobId);
               if (job) {
-                console.log(`Found job title for application ${app.id}:`, job.title);
                 return { ...app, jobTitle: job.title };
               }
             } catch (error) {
-              console.warn(`Could not fetch job details for jobId ${app.jobId}:`, error);
+              // Silently fail - job title missing is not critical
             }
           }
           return app;
         })
       );
       
-      console.log('Final applications with titles:', applicationsWithTitles);
       return applicationsWithTitles;
     } catch (error) {
       console.error('Error fetching applications:', error);
@@ -319,7 +294,6 @@ export const dashboardAPI = {
     try {
       // Backend supports both /dashboard and /stats endpoints
       const response = await api.get<any>('/dashboard');
-      console.log('Dashboard stats API response:', response.data);
       
       // Handle different response structures
       let data: any;
@@ -340,8 +314,6 @@ export const dashboardAPI = {
         data = extractData<DashboardStats>(response.data);
       }
       
-      console.log('Extracted dashboard stats data:', data);
-      
       // Ensure all stats are numbers, defaulting to 0 if undefined
       // Handle both 'expiredJobs' and 'totalExpired' field names from API
       const expiredJobsValue = data?.expiredJobs ?? data?.totalExpired ?? 0;
@@ -354,38 +326,16 @@ export const dashboardAPI = {
         totalResumes: typeof totalResumesValue === 'number' ? totalResumesValue : (Number(totalResumesValue) || 0),
       };
       
-      console.log('Final dashboard stats:', stats);
       return stats;
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
-      // Fallback: calculate stats from jobs if API fails
-      try {
-        const allJobs = await jobsAPI.getAllJobs();
-        const allApplications = await applicationsAPI.getAllApplications();
-        const allResumes = await resumeAPI.getAllResumes();
-        
-        const expiredJobsCount = allJobs.filter(job => 
-          job.expiry_status === 'expired' || job.isExpired
-        ).length;
-        
-        const fallbackStats: DashboardStats = {
-          totalJobs: allJobs.length,
-          totalApplications: allApplications.length,
-          expiredJobs: expiredJobsCount,
-          totalResumes: allResumes.length,
-        };
-        
-        console.log('Using fallback stats:', fallbackStats);
-        return fallbackStats;
-      } catch (fallbackError) {
-        console.error('Error calculating fallback stats:', fallbackError);
-        return {
-          totalJobs: 0,
-          totalApplications: 0,
-          expiredJobs: 0,
-          totalResumes: 0,
-        };
-      }
+      // Return empty stats instead of expensive fallback
+      return {
+        totalJobs: 0,
+        totalApplications: 0,
+        expiredJobs: 0,
+        totalResumes: 0,
+      };
     }
   },
 };
@@ -432,24 +382,11 @@ export const resumeAPI = {
     try {
       // Ensure ID is converted to string for URL
       const resumeId = String(id);
-      console.log('Attempting to delete resume with ID:', resumeId);
       
       const response = await api.delete(`/resumes/${resumeId}`);
-      console.log('Delete response status:', response.status);
       
-      // Check if response has success message
-      if (response.data && response.data.message) {
-        console.log('Delete response message:', response.data.message);
-      }
       return;
     } catch (error: any) {
-      console.error('Delete resume error details:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-      });
-      
       // Re-throw with more context
       if (error.response) {
         // Server responded with error

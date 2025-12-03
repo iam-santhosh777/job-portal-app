@@ -14,69 +14,22 @@ A RESTful API built with Node.js, Express, and MySQL.
 ## Prerequisites
 
 - Node.js (v14 or higher)
-- MySQL database (see setup options below)
+- MySQL database hosted on Railway (or another cloud provider)
 
-## MySQL Database Setup Options
+## MySQL Database Setup
 
-Since you don't have MySQL installed, here are several options:
+This project uses **Railway** for MySQL database hosting.
 
-### Option 1: Docker (Recommended - Easiest)
+1. **Create a MySQL service on Railway:**
+   - Sign up at: https://railway.app
+   - Create a new MySQL service
+   - Get connection details from service settings
 
-1. **Install Docker Desktop** (if not already installed)
-   - Download from: https://www.docker.com/products/docker-desktop
+2. **Connection Options:**
+   - Use **MYSQL_URL** (full connection string): `mysql://user:password@host:port/database`
+   - Or use individual variables: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
 
-2. **Run MySQL in Docker:**
-   ```bash
-   docker run --name mysql-container -e MYSQL_ROOT_PASSWORD=rootpassword -e MYSQL_DATABASE=testdb -p 3306:3306 -d mysql:8.0
-   ```
-
-3. **Your connection details:**
-   - Host: `localhost`
-   - Port: `3306`
-   - User: `root`
-   - Password: `rootpassword`
-   - Database: `testdb`
-
-### Option 2: Cloud MySQL (Free Tier Available)
-
-**Option A: PlanetScale (Free tier available)**
-- Sign up at: https://planetscale.com
-- Create a new database
-- Get connection string from dashboard
-
-**Option B: Railway (Free tier available)**
-- Sign up at: https://railway.app
-- Create a new MySQL service
-- Get connection details from service settings
-
-**Option C: Aiven (Free tier available)**
-- Sign up at: https://aiven.io
-- Create MySQL service
-- Get connection details
-
-### Option 3: Install MySQL Locally
-
-**Windows:**
-1. Download MySQL Installer from: https://dev.mysql.com/downloads/installer/
-2. Run the installer and follow the setup wizard
-3. Set a root password during installation
-4. Start MySQL service from Services panel
-
-**macOS:**
-```bash
-brew install mysql
-brew services start mysql
-mysql_secure_installation
-```
-
-**Linux (Ubuntu/Debian):**
-```bash
-sudo apt update
-sudo apt install mysql-server
-sudo mysql_secure_installation
-sudo systemctl start mysql
-sudo systemctl enable mysql
-```
+**Important:** Use the **PUBLIC** hostname from Railway (not `mysql.railway.internal`) for local development.
 
 ## Installation
 
@@ -90,24 +43,27 @@ sudo systemctl enable mysql
    cp .env.example .env
    ```
 
-3. **Edit `.env` file with your MySQL credentials:**
+3. **Edit `.env` file with your Railway MySQL credentials:**
    ```env
-   DB_HOST=localhost
-   DB_USER=root
-   DB_PASSWORD=your_password_here
-   DB_NAME=testdb
+   # Option 1: Use full connection URL (recommended)
+   MYSQL_URL=mysql://user:password@host:port/database
+   
+   # Option 2: Use individual variables
+   # DB_HOST=your-railway-host.railway.app
+   # DB_PORT=3306
+   # DB_USER=root
+   # DB_PASSWORD=your_password_here
+   # DB_NAME=railway
+   
    PORT=3000
    ```
 
-4. **Create database and table:**
-   - Connect to your MySQL server
-   - Run the SQL script: `database/schema.sql`
-   - Or manually create the database and table:
-     ```sql
-     CREATE DATABASE IF NOT EXISTS testdb;
-     USE testdb;
-     ```
-   - Then run the table creation SQL from `database/schema.sql`
+4. **Initialize database schema:**
+   ```bash
+   npm run init-db
+   ```
+   
+   This will connect to your Railway database and create all necessary tables.
 
 ## Running the Application
 
@@ -190,8 +146,6 @@ nodejs_project/
 │   └── database.js      # Database connection configuration
 ├── routes/
 │   └── users.js         # User API routes
-├── database/
-│   └── schema.sql       # Database schema
 ├── server.js            # Main server file
 ├── package.json         # Dependencies
 ├── .env                 # Environment variables (create from .env.example)
@@ -201,10 +155,11 @@ nodejs_project/
 ## Troubleshooting
 
 **Database connection error:**
-- Verify MySQL is running
-- Check `.env` file has correct credentials
-- Ensure database exists
-- Check firewall settings if using remote database
+- Verify Railway MySQL service is running and accessible
+- Check `.env` file has correct Railway credentials
+- Ensure you're using PUBLIC hostname (not `mysql.railway.internal`)
+- Verify database exists in Railway
+- Check Railway service logs for connection issues
 
 **Port already in use:**
 - Change `PORT` in `.env` file

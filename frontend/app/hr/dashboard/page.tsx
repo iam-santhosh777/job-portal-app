@@ -10,8 +10,13 @@ import { Typography, Box, Button, Paper } from '@mui/material';
 import { Add, Work, Assignment, Schedule, Description } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import type { DashboardStats } from '@/types';
+import { usePageMetadata } from '@/hooks/usePageMetadata';
 
 export default function HRDashboardPage() {
+  usePageMetadata({
+    title: 'HR Dashboard',
+    description: 'Overview of your job portal activities including jobs, applications, and resume management.',
+  });
   const [stats, setStats] = useState<DashboardStats>({
     totalJobs: 0,
     totalApplications: 0,

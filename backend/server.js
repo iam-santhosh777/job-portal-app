@@ -36,9 +36,10 @@ const corsOriginChecker = (origin, callback) => {
   if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
     callback(null, true);
   } else {
-    // Log for debugging
-    console.log(`CORS blocked origin: ${origin}`);
-    console.log(`Allowed origins: ${allowedOrigins.join(', ')}`);
+    // Only log in development
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`CORS blocked origin: ${origin}`);
+    }
     callback(new Error('Not allowed by CORS'));
   }
 };
@@ -68,12 +69,6 @@ const PORT = process.env.PORT || 3000;
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   
-  // Log for debugging
-  if (req.method === 'OPTIONS') {
-    console.log(`[CORS] OPTIONS preflight from: ${origin || 'No origin'}`);
-    console.log(`[CORS] Allowed origins: ${JSON.stringify(allowedOrigins)}`);
-  }
-  
   // Check if origin is allowed (or no origin for curl/Postman)
   const isAllowed = !origin || allowedOrigins.includes(origin) || allowedOrigins.includes('*');
   
@@ -91,12 +86,13 @@ app.use((req, res, next) => {
       res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
       res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
       res.header('Access-Control-Max-Age', '86400'); // 24 hours
-      console.log(`[CORS] Sending 204 for OPTIONS from: ${origin}`);
       return res.sendStatus(204);
     }
   } else {
-    console.log(`[CORS] ❌ BLOCKED origin: ${origin}`);
-    console.log(`[CORS] Allowed: ${JSON.stringify(allowedOrigins)}`);
+    // Only log blocked requests in development
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[CORS] ❌ BLOCKED origin: ${origin}`);
+    }
     if (req.method === 'OPTIONS') {
       return res.status(403).json({ error: 'CORS: Origin not allowed' });
     }

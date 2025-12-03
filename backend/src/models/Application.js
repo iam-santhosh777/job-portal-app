@@ -41,14 +41,37 @@ class Application {
   static async findByJob(jobId) {
     const query = `
       SELECT a.*, 
+        j.title as job_title,
         u.name as user_name,
         u.email as user_email
       FROM applications a
+      JOIN jobs j ON a.job_id = j.id
       JOIN users u ON a.user_id = u.id
       WHERE a.job_id = ?
       ORDER BY a.created_at DESC
     `;
     const [rows] = await pool.query(query, [jobId]);
+    return rows;
+  }
+
+  static async findByJobs(jobIds) {
+    if (!jobIds || jobIds.length === 0) {
+      return [];
+    }
+    // Create placeholders for IN clause
+    const placeholders = jobIds.map(() => '?').join(',');
+    const query = `
+      SELECT a.*, 
+        j.title as job_title,
+        u.name as user_name,
+        u.email as user_email
+      FROM applications a
+      JOIN jobs j ON a.job_id = j.id
+      JOIN users u ON a.user_id = u.id
+      WHERE a.job_id IN (${placeholders})
+      ORDER BY a.created_at DESC
+    `;
+    const [rows] = await pool.query(query, jobIds);
     return rows;
   }
 

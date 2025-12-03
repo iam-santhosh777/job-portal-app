@@ -57,8 +57,10 @@ const pool = mysql.createPool({
   password: dbConfig.password,
   database: dbConfig.database,
   waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
+  connectionLimit: process.env.NODE_ENV === 'production' ? 10 : 20, // More connections for development
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0
 });
 
 // Test database connection
@@ -102,10 +104,11 @@ async function testConnection() {
       console.error('   5. Update your .env file with the public hostname\n');
     } else {
       console.error('\n💡 To fix this:');
-      console.error('   1. Make sure MySQL is running');
-      console.error('   2. Check your .env file has correct credentials');
-      console.error('   3. Ensure the database exists');
-      console.error('   4. Check Railway documentation for connection help\n');
+      console.error('   1. Verify Railway MySQL service is running and accessible');
+      console.error('   2. Check your .env file has correct Railway credentials');
+      console.error('   3. Ensure you\'re using PUBLIC hostname (not mysql.railway.internal)');
+      console.error('   4. Verify the database exists in Railway');
+      console.error('   5. Check Railway service logs for connection issues\n');
     }
     return false;
   }

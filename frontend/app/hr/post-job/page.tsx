@@ -5,8 +5,13 @@ import { JobForm } from '@/components/JobForm';
 import { motion } from 'framer-motion';
 import { Container, Typography, Box, Paper } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import { usePageMetadata } from '@/hooks/usePageMetadata';
 
 export default function HRPostJobPage() {
+  usePageMetadata({
+    title: 'Post New Job',
+    description: 'Create a new job posting to attract qualified candidates. Fill in job details and requirements.',
+  });
   const router = useRouter();
 
   const handleSuccess = () => {

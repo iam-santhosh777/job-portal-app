@@ -5,6 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { SocketProvider } from '@/contexts/SocketContext';
+import { useEffect } from 'react';
 import './globals.css';
 
 const theme = createTheme({
@@ -13,6 +14,21 @@ const theme = createTheme({
   },
 });
 
+// Set default metadata
+function DefaultMetadata() {
+  useEffect(() => {
+    document.title = 'Job Portal - Find Your Dream Job';
+    let metaDescription = document.querySelector('meta[name="description"]');
+    if (!metaDescription) {
+      metaDescription = document.createElement('meta');
+      metaDescription.setAttribute('name', 'description');
+      document.head.appendChild(metaDescription);
+    }
+    metaDescription.setAttribute('content', 'Connect job seekers with employers. Browse available positions and apply today.');
+  }, []);
+  return null;
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -20,7 +36,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body suppressHydrationWarning>
+        <DefaultMetadata />
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <AuthProvider>

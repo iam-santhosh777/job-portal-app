@@ -25,15 +25,22 @@ That's it! Your entire application will be running.
    cp backend/.env.example backend/.env
    ```
 
-2. Edit `backend/.env` with your database credentials:
+2. Edit `backend/.env` with your Railway database credentials:
    ```env
-   DB_HOST=localhost
-   DB_PORT=3306
-   DB_USER=root
-   DB_PASSWORD=your_password_here
-   DB_NAME=job_portal_db
+   # Option 1: Use full connection URL (recommended)
+   MYSQL_URL=mysql://user:password@host:port/database
+   
+   # Option 2: Use individual variables
+   # DB_HOST=your-railway-host.railway.app
+   # DB_PORT=3306
+   # DB_USER=root
+   # DB_PASSWORD=your_password_here
+   # DB_NAME=railway
+   
    JWT_SECRET=your-secret-key-change-in-production-min-32-characters-long
    ```
+   
+   **Note:** Get your Railway connection details from the Railway dashboard. Use the PUBLIC hostname (not `mysql.railway.internal`).
 
 ### Step 2: Frontend Environment
 
@@ -102,9 +109,10 @@ npm start
 - Frontend: Next.js will auto-select next available port (usually 3001 if 3000 is taken)
 
 **Database connection issues?**
-- Verify MySQL is running
-- Check credentials in `backend/.env`
-- Ensure database exists: `CREATE DATABASE job_portal_db;`
+- Verify Railway MySQL service is running
+- Check credentials in `backend/.env` match Railway connection details
+- Ensure you're using PUBLIC hostname (not `mysql.railway.internal`)
+- Check Railway service logs for connection errors
 
 **Frontend can't reach backend?**
 - Verify `NEXT_PUBLIC_API_URL` in `frontend/.env.local`

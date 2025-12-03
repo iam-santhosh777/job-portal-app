@@ -11,8 +11,13 @@ import { motion } from 'framer-motion';
 import { Box, Paper, useMediaQuery, useTheme, Button } from '@mui/material';
 import { Refresh } from '@mui/icons-material';
 import type { Resume } from '@/types';
+import { usePageMetadata } from '@/hooks/usePageMetadata';
 
 export default function HRResumesPage() {
+  usePageMetadata({
+    title: 'Resume Management',
+    description: 'Upload and manage candidate resumes. Download, organize, and track resume submissions.',
+  });
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));

@@ -10,8 +10,13 @@ import { Refresh, Work } from '@mui/icons-material';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
+import { usePageMetadata } from '@/hooks/usePageMetadata';
 
 export default function UserJobsPage() {
+  usePageMetadata({
+    title: 'Available Jobs',
+    description: 'Browse and apply to available job positions. Find your next career opportunity today.',
+  });
   const { jobs, loading, loadActiveJobs, applyToJob } = useJobs({ autoLoad: true, filterExpired: true });
   const [applyingJobId, setApplyingJobId] = useState<string | null>(null);
 

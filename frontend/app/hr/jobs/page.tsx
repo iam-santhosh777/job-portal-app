@@ -12,8 +12,13 @@ import { Add, Work, Block, CheckCircle } from '@mui/icons-material';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
+import { usePageMetadata } from '@/hooks/usePageMetadata';
 
 export default function HRJobsPage() {
+  usePageMetadata({
+    title: 'Job Management',
+    description: 'Manage all your job postings. Create, edit, and track active and expired job listings.',
+  });
   const { jobs, loading, loadJobs, markAsExpired } = useJobs({ autoLoad: true });
   const { filter, setFilter, filteredJobs, activeCount, expiredCount } = useJobFilters(jobs);
   const [jobFormOpen, setJobFormOpen] = useState(false);
