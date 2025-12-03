@@ -141,7 +141,7 @@ VITE_ENV=development
 
 After running `npm run dev`:
 
-- **Frontend**: http://localhost:5173
+- **Frontend**: http://localhost:3001
 - **Backend API**: http://localhost:3000
 - **API Health Check**: http://localhost:3000/api/health
 
