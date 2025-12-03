@@ -25,7 +25,7 @@ This will start both the backend server and frontend development server simultan
 From the root directory, run:
 
 ```bash
-npm run install:all
+npm run install
 ```
 
 This will install dependencies for the root, backend, and frontend projects.
