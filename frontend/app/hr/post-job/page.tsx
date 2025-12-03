@@ -1,18 +1,20 @@
-import { Layout } from '../components/Layout';
-import { JobForm } from '../components/JobForm';
+'use client';
+
+import { Layout } from '@/components/Layout';
+import { JobForm } from '@/components/JobForm';
 import { motion } from 'framer-motion';
 import { Container, Typography, Box, Paper } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
-export const HRPostJob = () => {
-  const navigate = useNavigate();
+export default function HRPostJobPage() {
+  const router = useRouter();
 
   const handleSuccess = () => {
-    navigate('/hr/jobs');
+    router.push('/hr/jobs');
   };
 
   const handleCancel = () => {
-    navigate('/hr/jobs');
+    router.push('/hr/jobs');
   };
 
   return (
@@ -50,5 +52,5 @@ export const HRPostJob = () => {
       </Container>
     </Layout>
   );
-};
+}
 

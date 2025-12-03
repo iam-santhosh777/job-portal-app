@@ -1,22 +1,24 @@
+'use client';
+
 import { useState, useEffect } from 'react';
-import { Layout } from '../components/Layout';
-import { DashboardWidget } from '../components/DashboardWidget';
-import { dashboardAPI } from '../services/api';
+import { Layout } from '@/components/Layout';
+import { DashboardWidget } from '@/components/DashboardWidget';
+import { dashboardAPI } from '@/services/api';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { Typography, Box, Button, Paper } from '@mui/material';
 import { Add, Work, Assignment, Schedule, Description } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import type { DashboardStats } from '../types';
+import { useRouter } from 'next/navigation';
+import type { DashboardStats } from '@/types';
 
-export const HRDashboard = () => {
+export default function HRDashboardPage() {
   const [stats, setStats] = useState<DashboardStats>({
     totalJobs: 0,
     totalApplications: 0,
     expiredJobs: 0,
     totalResumes: 0,
   });
-  const navigate = useNavigate();
+  const router = useRouter();
 
   useEffect(() => {
     loadData();
@@ -177,7 +179,7 @@ export const HRDashboard = () => {
                   <Button
                     variant="contained"
                     startIcon={<Add />}
-                    onClick={() => navigate('/hr/post-job')}
+                    onClick={() => router.push('/hr/post-job')}
                     size="large"
                     fullWidth
                     sx={{
@@ -204,7 +206,7 @@ export const HRDashboard = () => {
                   <Button
                     variant="outlined"
                     startIcon={<Work />}
-                    onClick={() => navigate('/hr/jobs')}
+                    onClick={() => router.push('/hr/jobs')}
                     size="large"
                     fullWidth
                     sx={{
@@ -232,7 +234,7 @@ export const HRDashboard = () => {
                   <Button
                     variant="outlined"
                     startIcon={<Assignment />}
-                    onClick={() => navigate('/hr/applications')}
+                    onClick={() => router.push('/hr/applications')}
                     size="large"
                     fullWidth
                     sx={{
@@ -260,7 +262,7 @@ export const HRDashboard = () => {
                   <Button
                     variant="outlined"
                     startIcon={<Description />}
-                    onClick={() => navigate('/hr/resumes')}
+                    onClick={() => router.push('/hr/resumes')}
                     size="large"
                     fullWidth
                     sx={{
@@ -286,4 +288,5 @@ export const HRDashboard = () => {
       </Box>
     </Layout>
   );
-};
+}
+

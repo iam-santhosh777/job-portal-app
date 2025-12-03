@@ -1,6 +1,8 @@
+'use client';
+
 import { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   Button,
@@ -13,26 +15,27 @@ import {
   IconButton,
 } from '@mui/material';
 import { Email, Lock, Login as LoginIcon, Visibility, VisibilityOff } from '@mui/icons-material';
-import nextHireLogo from '../assets/nextHire.png';
+import Image from 'next/image';
+import nextHireLogo from '@/assets/nextHire.png';
 
-export const Login = () => {
+export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { login, isAuthenticated, user, loading: authLoading } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   // Redirect if already logged in
   useEffect(() => {
     if (!authLoading && isAuthenticated && user) {
       if (user.role === 'hr') {
-        navigate('/hr/dashboard', { replace: true });
+        router.replace('/hr/dashboard');
       } else {
-        navigate('/user/dashboard', { replace: true });
+        router.replace('/user/dashboard');
       }
     }
-  }, [isAuthenticated, user, authLoading, navigate]);
+  }, [isAuthenticated, user, authLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,17 +87,25 @@ export const Login = () => {
                 transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
               >
                 <Box
-                  component="img"
-                  src={nextHireLogo}
-                  alt="nextHire"
                   sx={{
                     height: { xs: 60, sm: 80, md: 100 },
                     width: 'auto',
-                    objectFit: 'contain',
                     mb: 2,
                     mx: 'auto',
+                    position: 'relative',
                   }}
-                />
+                >
+                  <Image
+                    src={nextHireLogo}
+                    alt="nextHire"
+                    style={{
+                      height: 'auto',
+                      width: 'auto',
+                      objectFit: 'contain',
+                    }}
+                    priority
+                  />
+                </Box>
               </motion.div>
               <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
                 Sign in to continue
@@ -234,4 +245,5 @@ export const Login = () => {
       </Container>
     </Box>
   );
-};
+}
+

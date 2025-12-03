@@ -1,8 +1,11 @@
+'use client';
+
 import { useState, useRef, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import {
   Box,
   Drawer,
@@ -34,6 +37,7 @@ import {
   Menu as MenuIcon,
   Settings,
   Notifications,
+  ArrowForward,
 } from '@mui/icons-material';
 
 interface LayoutProps {
@@ -44,8 +48,8 @@ const drawerWidth = 280;
 
 export const Layout = ({ children }: LayoutProps) => {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -91,7 +95,7 @@ export const Layout = ({ children }: LayoutProps) => {
   };
 
   const handleNavigation = (path: string) => {
-    navigate(path);
+    router.push(path);
     if (isMobile) {
       setMobileOpen(false);
     }
@@ -143,6 +147,20 @@ export const Layout = ({ children }: LayoutProps) => {
   };
 
   const navItems = getNavItems();
+
+  // Get page title from pathname
+  const getPageTitle = () => {
+    const titleMap: Record<string, string> = {
+      '/hr/dashboard': 'HR Dashboard',
+      '/hr/jobs': 'Job Management',
+      '/hr/post-job': 'Post New Job',
+      '/hr/applications': 'Job Applications',
+      '/hr/resumes': 'Resume Management',
+      '/user/dashboard': 'User Dashboard',
+      '/user/jobs': 'Available Jobs',
+    };
+    return titleMap[pathname || ''] || 'Dashboard';
+  };
 
   const drawer = (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: 'background.paper', pointerEvents: 'auto', position: 'relative', zIndex: 1 }}>
@@ -378,7 +396,7 @@ export const Layout = ({ children }: LayoutProps) => {
       {/* Navigation Items */}
       <List sx={{ flexGrow: 1, pt: 2 }}>
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
+          const isActive = pathname === item.path;
           return (
             <ListItem key={item.text} disablePadding sx={{ mb: 0.5, px: 2 }}>
               <ListItemButton
@@ -545,19 +563,60 @@ export const Layout = ({ children }: LayoutProps) => {
               <MenuIcon />
             </IconButton>
 
-            {/* Left: App Logo */}
+            {/* Left: App Logo with Arrow and Page Title */}
             <Box
-              component="img"
-              src={nextHireLogo}
-              alt="nextHire"
               sx={{
-                height: { xs: 28, sm: 32, md: 36 },
-                width: 'auto',
-                objectFit: 'contain',
-                display: { xs: 'none', sm: 'block' },
+                display: { xs: 'none', sm: 'flex' },
+                alignItems: 'flex-start',
                 mr: { xs: 0, sm: 2 },
+                flexDirection: 'column',
               }}
-            />
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 0.5,
+                  mb: 0.5,
+                }}
+              >
+                {/* <ArrowForward
+                  sx={{
+                    color: 'primary.main',
+                    fontSize: { sm: '1.25rem', md: '1.5rem' },
+                  }}
+                /> */}
+                <Box
+                  sx={{
+                    // height: { sm: 20, md: 24 },
+                    width: 'auto',
+                    position: 'relative',
+                  }}
+                >
+                  <Image
+                    src={nextHireLogo}
+                    alt="nextHire"
+                    style={{
+                      height: '50px',
+                      width: 'auto',
+                      objectFit: 'contain',
+                    }}
+                    priority
+                  />
+                </Box>
+              </Box>
+              {/* <Typography
+                variant="body2"
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: { sm: '0.75rem', md: '0.875rem' },
+                  lineHeight: 1.2,
+                  ml: { sm: '1.75rem', md: '2rem' },
+                }}
+              >
+                {getPageTitle()}
+              </Typography> */}
+            </Box>
 
             {/* Spacer to push action icons to the right */}
             <Box sx={{ flexGrow: 1 }} />

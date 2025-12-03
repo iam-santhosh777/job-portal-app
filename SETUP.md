@@ -39,13 +39,15 @@ That's it! Your entire application will be running.
 
 1. Copy the example file:
    ```bash
-   cp frontend/.env.example frontend/.env
+   cp frontend/.env.example frontend/.env.local
    ```
 
-2. Edit `frontend/.env` (usually no changes needed for local development):
+2. Edit `frontend/.env.local` (usually no changes needed for local development):
    ```env
-   VITE_API_URL=http://localhost:3000
+   NEXT_PUBLIC_API_URL=http://localhost:3000/api
    ```
+   
+   **Note:** Next.js uses `.env.local` for local development (this file is gitignored).
 
 ### Step 3: Initialize Database
 
@@ -64,16 +66,19 @@ npm run dev
 
 This starts:
 - Backend server on http://localhost:3000
-- Frontend dev server on http://localhost:5173
+- Frontend dev server on http://localhost:3000 (Next.js default port)
+
+**Note:** If you get a port conflict, Next.js will automatically use the next available port (usually 3001).
 
 **Development with Railway backend:**
-```bash
-npm run dev:prod
-```
-
-This starts:
-- Frontend dev server on http://localhost:5173 (connects to Railway backend)
-- Uses `.env.dev-prod` file with Railway URL
+1. Create `frontend/.env.local` with Railway URL:
+   ```env
+   NEXT_PUBLIC_API_URL=https://backend-nodejs-jobportal-production.up.railway.app/api
+   ```
+2. Run:
+   ```bash
+   npm run dev:frontend
+   ```
 
 ### Production Mode
 
@@ -87,13 +92,14 @@ npm start
 - The `npm run dev` command uses `concurrently` to run both services
 - Environment variables are automatically loaded from `.env` files
 - Backend uses `dotenv` to load environment variables
-- Frontend uses Vite's built-in environment variable support (prefixed with `VITE_`)
+- Frontend uses Next.js environment variable support (prefixed with `NEXT_PUBLIC_`)
+- Next.js frontend runs on port 3000 by default (same as backend, but Next.js will auto-select next port if conflict)
 
 ## 🐛 Troubleshooting
 
 **Port conflicts?**
 - Backend: Change `PORT` in `backend/.env`
-- Frontend: Vite will auto-select next available port
+- Frontend: Next.js will auto-select next available port (usually 3001 if 3000 is taken)
 
 **Database connection issues?**
 - Verify MySQL is running
@@ -101,6 +107,8 @@ npm start
 - Ensure database exists: `CREATE DATABASE job_portal_db;`
 
 **Frontend can't reach backend?**
-- Verify `VITE_API_URL` in `frontend/.env`
+- Verify `NEXT_PUBLIC_API_URL` in `frontend/.env.local`
+- Make sure the URL includes `/api` suffix (e.g., `http://localhost:3000/api`)
 - Check `CLIENT_URL` in `backend/.env` includes frontend URL
+- Restart the Next.js dev server after changing environment variables
 

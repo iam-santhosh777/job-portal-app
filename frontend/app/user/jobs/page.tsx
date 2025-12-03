@@ -1,15 +1,17 @@
+'use client';
+
 import { useState } from 'react';
-import { Layout } from '../components/Layout';
-import { JobCard } from '../components/JobCard';
-import { useJobs } from '../hooks/useJobs';
+import { Layout } from '@/components/Layout';
+import { JobCard } from '@/components/JobCard';
+import { useJobs } from '@/hooks/useJobs';
 import { motion } from 'framer-motion';
 import { Box, Button } from '@mui/material';
 import { Refresh, Work } from '@mui/icons-material';
-import { PageHeader } from '../components/shared/PageHeader';
-import { LoadingSpinner } from '../components/shared/LoadingSpinner';
-import { EmptyState } from '../components/shared/EmptyState';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { EmptyState } from '@/components/shared/EmptyState';
 
-export const UserJobs = () => {
+export default function UserJobsPage() {
   const { jobs, loading, loadActiveJobs, applyToJob } = useJobs({ autoLoad: true, filterExpired: true });
   const [applyingJobId, setApplyingJobId] = useState<string | null>(null);
 
@@ -104,4 +106,5 @@ export const UserJobs = () => {
       </Box>
     </Layout>
   );
-};
+}
+

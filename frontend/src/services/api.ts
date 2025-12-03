@@ -3,9 +3,9 @@ import type { LoginCredentials, AuthResponse, Job, JobApplication, DashboardStat
 
 // API Base URL - Detect environment at runtime
 const getApiBaseUrl = (): string => {
-  // Priority 1: Use VITE_API_URL environment variable if set
-  if (import.meta.env.VITE_API_URL) {
-    const apiUrl = import.meta.env.VITE_API_URL.trim();
+  // Priority 1: Use NEXT_PUBLIC_API_URL environment variable if set
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL.trim();
     // Ensure it doesn't end with /api (we'll add it)
     const baseUrl = apiUrl.endsWith('/api') ? apiUrl : `${apiUrl}/api`;
     return baseUrl;

@@ -1,4 +1,7 @@
-import { Navigate } from 'react-router-dom';
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../contexts/AuthContext';
 import type { UserRole } from '../types';
 
@@ -9,6 +12,17 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
   const { isAuthenticated, user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading) {
+      if (!isAuthenticated) {
+        router.replace('/login');
+      } else if (allowedRoles && user && !allowedRoles.includes(user.role)) {
+        router.replace(user.role === 'hr' ? '/hr/dashboard' : '/user/dashboard');
+      }
+    }
+  }, [isAuthenticated, user, loading, allowedRoles, router]);
 
   if (loading) {
     return (
@@ -19,11 +33,11 @@ export const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) 
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return null;
   }
 
   if (allowedRoles && user && !allowedRoles.includes(user.role)) {
-    return <Navigate to={user.role === 'hr' ? '/hr/dashboard' : '/user/dashboard'} replace />;
+    return null;
   }
 
   return <>{children}</>;

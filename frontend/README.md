@@ -1,240 +1,104 @@
-# HRMS + Job Portal - Frontend
+# Job Portal Frontend (Next.js)
 
-A complete React.js frontend application for an HRMS (Human Resource Management System) and Job Portal with real-time notifications using Socket.io.
+A modern Next.js frontend application for the Job Portal system.
 
-## Features
+## 🚀 Quick Start
 
-### 🔐 Authentication & RBAC
-- Single login interface for HR and Users
-- Role-based access control (RBAC)
-- Protected routes based on user roles
-- Automatic redirect after login:
-  - HR → HR Dashboard
-  - User → User Dashboard
+### Prerequisites
+- Node.js >= 18.0.0
+- npm >= 9.0.0
 
-### 👤 User Dashboard
-- View all active job listings
-- Apply to jobs with one click
-- Real-time job updates (expired jobs disappear immediately)
-- Success notifications on application
+### Installation
 
-### 👔 HR Dashboard
-- **Dashboard Summary Widgets:**
-  - Total jobs posted
-  - Total applications received
-  - Total expired jobs
-  - Total resumes uploaded
-
-- **Job Management:**
-  - Post new jobs with form
-  - Set expiry dates
-  - Mark jobs as expired (removes from user dashboard immediately)
-
-- **Resume Upload:**
-  - Upload multiple resumes simultaneously
-  - Real-time upload progress per file
-  - Retry failed uploads with one click
-
-- **Job Applications (Real-Time):**
-  - Receive WebSocket notifications for new applications
-  - Toast notifications + automatic list updates
-  - View all applications in a table format
-
-## Environment Setup
-
-### Development Environment
-
-1. Create a `.env.development` file in the root directory:
-```env
-VITE_API_BASE_URL=http://localhost:3000/api
-```
-
-2. Run the development server:
-```bash
-npm run dev
-```
-
-### Production Environment
-
-1. **For local production builds**, create a `.env.production` file:
-```env
-VITE_API_BASE_URL=https://backend-nodejs-jobportal-production.up.railway.app/api
-```
-
-2. **For Vercel deployment**, set the environment variable in Vercel Dashboard:
-   - Go to your project settings → Environment Variables
-   - Add: `VITE_API_BASE_URL` = `https://backend-nodejs-jobportal-production.up.railway.app/api`
-   - Apply to: Production, Preview, and Development environments
-
-3. Build for production:
-```bash
-npm run build
-```
-
-**Note:** The code automatically uses the Railway URL in production if `VITE_API_BASE_URL` is not set, but it's recommended to set it in Vercel for clarity.
-
-### Environment Variables
-
-- `VITE_API_BASE_URL`: The base URL for the backend API
-  - Development: `http://localhost:3000/api`
-  - Production: `https://backend-nodejs-jobportal-production.up.railway.app/api`
-
-**Note:** Vite automatically loads `.env.development` when running `npm run dev` and `.env.production` when building with `npm run build`.
-
-## Tech Stack
-
-- **React.js 19+** with TypeScript
-- **React Router** for navigation
-- **Context API** for state management
-- **Axios** for API calls
-- **Socket.io-client** for real-time WebSocket communication
-- **Material-UI (MUI)** for UI components
-- **React Hot Toast** for notifications
-- **Tailwind CSS** (configured but using MUI primarily)
-
-## Project Structure
-
-```
-src/
-├── components/          # Reusable components
-│   ├── DashboardWidget.tsx
-│   ├── JobApplicationList.tsx
-│   ├── JobCard.tsx
-│   ├── JobForm.tsx
-│   ├── Layout.tsx
-│   ├── ProtectedRoute.tsx
-│   └── ResumeUpload.tsx
-├── contexts/            # React Context providers
-│   ├── AuthContext.tsx
-│   └── SocketContext.tsx
-├── pages/               # Page components
-│   ├── HRDashboard.tsx
-│   ├── Login.tsx
-│   └── UserDashboard.tsx
-├── services/            # API and service layers
-│   ├── api.ts
-│   └── socket.ts
-├── types/               # TypeScript type definitions
-│   └── index.ts
-├── App.tsx              # Main app component with routing
-└── main.tsx             # Entry point
-```
-
-## Setup & Installation
-
-1. **Install dependencies:**
+1. Install dependencies:
    ```bash
    npm install
    ```
 
-2. **Configure environment variables:**
-   
-   The project uses separate environment files for development and production:
-   
-   - `.env.development` - Used when running `npm run dev`
-   - `.env.production` - Used when running `npm run build`
-   
-   These files are already created with the correct values:
-   - Development: `http://localhost:3000/api`
-   - Production: `https://backend-nodejs-jobportal-production.up.railway.app/api`
-   
-   **Note:** The socket URL is automatically derived from the API URL.
-
-3. **Start development server:**
-   
-   **Local development (connects to localhost backend):**
+2. Create environment file:
    ```bash
-   npm run dev
-   ```
-   
-   **Local development with production backend (for testing):**
-   ```bash
-   npm run dev:prod
-   ```
-   This runs the dev server locally (with hot reload) but connects to the production Railway backend. Uses `.env.dev-prod` file.
-
-4. **Build for production:**
-   ```bash
-   npm run build
+   cp .env.example .env.local
    ```
 
-## API Integration
+3. Update `.env.local` with your API URL:
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:3000/api
+   ```
 
-The frontend expects the following backend API endpoints:
+### Development
 
-### Authentication
-- `POST /api/auth/login` - User login
+Run the development server:
+```bash
+npm run dev
+```
 
-### Jobs
-- `GET /api/jobs` - Get all jobs (HR)
-- `GET /api/jobs/active` - Get active jobs (User)
-- `POST /api/jobs` - Create new job
-- `PATCH /api/jobs/:id/expire` - Mark job as expired
-- `POST /api/jobs/:id/apply` - Apply to a job
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Applications
-- `GET /api/applications` - Get all applications (HR)
+**Note:** If port 3000 is already in use, Next.js will automatically use the next available port (usually 3001).
 
-### Dashboard
-- `GET /api/dashboard/stats` - Get dashboard statistics
+### Build for Production
 
-### Resumes
-- `POST /api/resumes/upload` - Upload resume (multipart/form-data)
-- `GET /api/resumes` - Get all resumes
+```bash
+npm run build
+npm run start
+```
 
-## WebSocket Events
+### Available Scripts
 
-The frontend listens for the following Socket.io events:
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
 
-- `new-application` - Emitted when a new job application is received (HR only)
+## 📁 Project Structure
 
-## Authentication Flow
+```
+frontend/
+├── app/                    # Next.js App Router pages
+│   ├── login/            # Login page
+│   ├── user/              # User routes
+│   │   ├── dashboard/     # User dashboard
+│   │   └── jobs/          # User jobs page
+│   └── hr/                # HR routes
+│       ├── dashboard/     # HR dashboard
+│       ├── jobs/          # HR jobs management
+│       ├── post-job/      # Post new job
+│       ├── applications/  # View applications
+│       └── resumes/       # Resume management
+├── src/
+│   ├── components/        # React components
+│   ├── contexts/          # React contexts (Auth, Socket)
+│   ├── hooks/             # Custom React hooks
+│   ├── services/          # API and Socket services
+│   ├── types/             # TypeScript types
+│   └── utils/             # Utility functions
+└── public/                # Static assets
+```
 
-1. User logs in with email and password
-2. Backend returns user object and JWT token
-3. Token is stored in localStorage
-4. User is redirected based on role:
-   - `hr` → `/hr/dashboard`
-   - `user` → `/user/dashboard`
-5. Socket.io connection is established for HR users
-6. Protected routes check authentication and role
+## 🔐 Authentication
 
-## Component Architecture
+The app uses client-side authentication with localStorage:
+- Token is stored in `localStorage` as `token`
+- User data is stored in `localStorage` as `user`
+- Routes are protected via layout components (`app/user/layout.tsx`, `app/hr/layout.tsx`)
 
-### Reusable Components
-- **JobCard**: Displays job information with apply/expire actions
-- **DashboardWidget**: Stat widget for dashboard summary
-- **ResumeUpload**: Multi-file upload with progress and retry
-- **JobForm**: Form for creating new job postings
-- **JobApplicationList**: Table displaying all job applications
-- **Layout**: Common layout with header and navigation
-- **ProtectedRoute**: Route guard for authentication and RBAC
+## 🌐 Environment Variables
 
-### Context Providers
-- **AuthContext**: Manages authentication state and user session
-- **SocketContext**: Manages Socket.io connection and real-time events
+All environment variables must be prefixed with `NEXT_PUBLIC_` to be accessible in the browser:
 
-## Real-Time Features
+- `NEXT_PUBLIC_API_URL` - Backend API base URL (should include `/api` suffix)
 
-1. **Job Expiration**: When HR marks a job as expired, it immediately disappears from the user dashboard
-2. **New Applications**: HR receives real-time toast notifications when users apply to jobs
-3. **Application List**: Automatically updates when new applications are received
+## 📦 Key Dependencies
 
-## Error Handling
+- **Next.js 15** - React framework
+- **React 19** - UI library
+- **Material-UI** - Component library
+- **Tailwind CSS** - Utility-first CSS
+- **Framer Motion** - Animation library
+- **Axios** - HTTP client
+- **Socket.io Client** - Real-time communication
+- **React Hot Toast** - Toast notifications
 
-- API errors are caught and displayed via toast notifications
-- Failed file uploads show retry button
-- Network errors are gracefully handled
-- Loading states are shown during async operations
+## 🔄 Migration from React (Vite)
 
-## Development Notes
-
-- All API calls use Axios interceptors to attach JWT tokens
-- Socket.io connection is only established for HR users
-- File uploads support progress tracking
-- Toast notifications provide user feedback for all actions
-- TypeScript ensures type safety throughout the application
-
-## License
-
-MIT
+This project was migrated from React + Vite to Next.js. See `MIGRATION.md` for details.

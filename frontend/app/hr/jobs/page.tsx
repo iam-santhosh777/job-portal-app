@@ -1,17 +1,19 @@
+'use client';
+
 import { useState } from 'react';
-import { Layout } from '../components/Layout';
-import { JobCard } from '../components/JobCard';
-import { JobForm } from '../components/JobForm';
-import { useJobs } from '../hooks/useJobs';
-import { useJobFilters } from '../hooks/useJobFilters';
+import { Layout } from '@/components/Layout';
+import { JobCard } from '@/components/JobCard';
+import { JobForm } from '@/components/JobForm';
+import { useJobs } from '@/hooks/useJobs';
+import { useJobFilters } from '@/hooks/useJobFilters';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Box, Button, Dialog, DialogTitle, DialogContent, Tabs, Tab, Chip, Typography } from '@mui/material';
 import { Add, Work, Block, CheckCircle } from '@mui/icons-material';
-import { PageHeader } from '../components/shared/PageHeader';
-import { LoadingSpinner } from '../components/shared/LoadingSpinner';
-import { EmptyState } from '../components/shared/EmptyState';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { EmptyState } from '@/components/shared/EmptyState';
 
-export const HRJobs = () => {
+export default function HRJobsPage() {
   const { jobs, loading, loadJobs, markAsExpired } = useJobs({ autoLoad: true });
   const { filter, setFilter, filteredJobs, activeCount, expiredCount } = useJobFilters(jobs);
   const [jobFormOpen, setJobFormOpen] = useState(false);
@@ -233,5 +235,5 @@ export const HRJobs = () => {
       </Box>
     </Layout>
   );
-};
+}
 

@@ -1,10 +1,12 @@
-import { Layout } from '../components/Layout';
-import { JobApplicationList } from '../components/JobApplicationList';
-import { PageHeader } from '../components/shared/PageHeader';
+'use client';
+
+import { Layout } from '@/components/Layout';
+import { JobApplicationList } from '@/components/JobApplicationList';
+import { PageHeader } from '@/components/shared/PageHeader';
 import { motion } from 'framer-motion';
 import { Container } from '@mui/material';
 
-export const HRApplications = () => {
+export default function HRApplicationsPage() {
   return (
     <Layout>
       <Container maxWidth="xl">
@@ -23,8 +25,5 @@ export const HRApplications = () => {
       </Container>
     </Layout>
   );
-};
-
-
-
+}
 

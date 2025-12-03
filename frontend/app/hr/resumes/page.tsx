@@ -1,16 +1,18 @@
+'use client';
+
 import { useState } from 'react';
-import { Layout } from '../components/Layout';
-import { ResumeUpload } from '../components/ResumeUpload';
-import { ResumeList } from '../components/ResumeList';
-import { DeleteResumeDialog } from '../components/DeleteResumeDialog';
-import { PageHeader } from '../components/shared/PageHeader';
-import { useResumes } from '../hooks/useResumes';
+import { Layout } from '@/components/Layout';
+import { ResumeUpload } from '@/components/ResumeUpload';
+import { ResumeList } from '@/components/ResumeList';
+import { DeleteResumeDialog } from '@/components/DeleteResumeDialog';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { useResumes } from '@/hooks/useResumes';
 import { motion } from 'framer-motion';
 import { Box, Paper, useMediaQuery, useTheme, Button } from '@mui/material';
 import { Refresh } from '@mui/icons-material';
-import type { Resume } from '../types';
+import type { Resume } from '@/types';
 
-export const HRResumes = () => {
+export default function HRResumesPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
@@ -132,4 +134,5 @@ export const HRResumes = () => {
       </Box>
     </Layout>
   );
-};
+}
+

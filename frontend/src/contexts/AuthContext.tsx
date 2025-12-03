@@ -1,6 +1,8 @@
+'use client';
+
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { authAPI } from '../services/api';
 import type { User, LoginCredentials } from '../types';
 import { toast } from 'react-hot-toast';
@@ -18,7 +20,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   useEffect(() => {
     // Check for stored user session
@@ -45,9 +47,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       // Redirect based on role
       if (response.user.role === 'hr') {
-        navigate('/hr/dashboard');
+        router.push('/hr/dashboard');
       } else {
-        navigate('/user/dashboard');
+        router.push('/user/dashboard');
       }
 
       toast.success('Login successful!');
@@ -60,7 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     authAPI.logout();
     setUser(null);
-    navigate('/login');
+    router.push('/login');
     toast.success('Logged out successfully');
   };
 

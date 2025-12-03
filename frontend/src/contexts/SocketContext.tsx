@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, useContext, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { socketService } from '../services/socket';
